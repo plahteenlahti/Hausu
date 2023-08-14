@@ -1,87 +1,74 @@
-import { Github, Twitter } from "@tamagui/lucide-icons";
-import { Link, useRouter } from "expo-router";
-import {
-  Button,
-  H1,
-  ListItem,
-  Paragraph,
-  Separator,
-  YGroup,
-  YStack
-} from "tamagui";
+import { useState } from "react";
+import { Filter, PlusCircle, Search } from "@tamagui/lucide-icons";
+import { useRouter } from "expo-router";
+import { Button, H2, Label, ScrollView, XStack, YStack } from "tamagui";
 
+import { CreatePropertyModal } from "../components/CreatePropertyModal";
+import { MySafeAreaView } from "../components/MySafeAreaView";
 import { MyStack } from "../components/MyStack";
+import { Property } from "../components/Property";
+import { apartments } from "../models/apartment";
 
 export default function Home() {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  const openAddNewPropertyModal = () => {
+    setOpen((x) => !x);
+  };
 
   return (
-    <MyStack>
-      <YStack
-        space="$4"
-        maxWidth={600}
-      >
-        <H1 textAlign="center">Welcome to Tamagui.</H1>
-        <Paragraph textAlign="center">
-          Here&apos;s a basic starter to show navigating from one screen to
-          another.
-        </Paragraph>
-      </YStack>
+    <MySafeAreaView>
+      <ScrollView bg="$background">
+        <MyStack>
+          <XStack justifyContent="space-between">
+            <YStack>
+              <H2
+                color="$blue12"
+                letterSpacing={1.2}
+              >
+                Properties
+              </H2>
+              <Label
+                disabled
+                size="$1.5"
+                color="$gray11"
+              >
+                Listing 10 properties
+              </Label>
+            </YStack>
+            <XStack space="$2">
+              <Button
+                circular
+                icon={Filter}
+              />
+              <Button
+                circular
+                icon={Search}
+              />
+            </XStack>
+          </XStack>
 
-      <Button onPress={() => router.push("/users/testuser")}>
-        Go to user page
-      </Button>
+          {apartments.map((apartment) => (
+            <Property
+              key={apartment.id}
+              property={apartment}
+            />
+          ))}
 
-      <YStack space="$5">
-        <YGroup
-          bordered
-          separator={<Separator />}
-          theme="green"
-        >
-          <YGroup.Item>
-            <Link
-              asChild
-              href="https://twitter.com/natebirdman"
-              target="_blank"
-            >
-              <ListItem
-                hoverTheme
-                title="Nate"
-                pressTheme
-                icon={Twitter}
-              />
-            </Link>
-          </YGroup.Item>
-          <YGroup.Item>
-            <Link
-              asChild
-              href="https://github.com/tamagui/tamagui"
-              target="_blank"
-            >
-              <ListItem
-                hoverTheme
-                pressTheme
-                title="Tamagui"
-                icon={Github}
-              />
-            </Link>
-          </YGroup.Item>
-          <YGroup.Item>
-            <Link
-              asChild
-              href="https://github.com/ivopr/tamagui-expo"
-              target="_blank"
-            >
-              <ListItem
-                hoverTheme
-                pressTheme
-                title="This Template"
-                icon={Github}
-              />
-            </Link>
-          </YGroup.Item>
-        </YGroup>
-      </YStack>
-    </MyStack>
+          <Button
+            onPress={openAddNewPropertyModal}
+            icon={PlusCircle}
+          >
+            Add new property
+          </Button>
+        </MyStack>
+      </ScrollView>
+
+      <CreatePropertyModal
+        open={open}
+        setOpen={setOpen}
+      />
+    </MySafeAreaView>
   );
 }

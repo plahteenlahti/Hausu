@@ -3,7 +3,7 @@
     "scheme": "tamagui-app",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "backgroundColor": "#ddffe2",
+      "backgroundColor": "#fff",
       "image": "./assets/splash.png",
       "resizeMode": "contain"
     },
@@ -11,7 +11,33 @@
     "name": "amira",
     "slug": "amira",
     "plugins": [
-      "expo-router"
-    ]
-  }
+      "expo-router",
+      "expo-build-properties"
+    ],
+    "ios": {
+      "bundleIdentifier": "digital.fenrir.amira"
+    }
+  },
+  "plugins": [
+    [
+      "expo-build-properties",
+      {
+        "android": {
+          "kotlinVersion": "1.6.10",
+          "compileSdkVersion": 33,
+          "targetSdkVersion": 33,
+          "packagingOptions": {
+            "pickFirst": ["**/libc++_shared.so"]
+          }
+        }
+      }
+    ],
+    [
+      "expo-image-picker",
+      {
+        "photosPermission": "The app accesses your photos to let add images to properties."
+      }
+    ],
+    "./plugins/watermelon.js"
+  ]
 }

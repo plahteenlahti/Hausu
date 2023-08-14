@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from "react";
+import { createContext, Suspense, useEffect } from "react";
 import { useColorScheme } from "react-native";
 import {
   DarkTheme,
@@ -9,10 +9,13 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { TamaguiProvider, Text, Theme } from "tamagui";
 
-import { MySafeAreaView } from "../components/MySafeAreaView";
+import { database } from "../db/database";
 import config from "../tamagui.config";
 
 SplashScreen.preventAutoHideAsync();
+
+export const DatabaseContext = createContext(database);
+export const { Provider, Consumer } = DatabaseContext;
 
 export default function Layout() {
   const colorScheme = useColorScheme();
@@ -31,22 +34,22 @@ export default function Layout() {
   if (!loaded) return null;
 
   return (
-    <TamaguiProvider config={config}>
-      <Suspense fallback={<Text>Loading...</Text>}>
-        <Theme name={colorScheme}>
-          <ThemeProvider
-            value={colorScheme === "light" ? DefaultTheme : DarkTheme}
-          >
-            <MySafeAreaView>
+    <Provider value={database}>
+      <TamaguiProvider config={config}>
+        <Suspense fallback={<Text>Loading...</Text>}>
+          <Theme name={colorScheme}>
+            <ThemeProvider
+              value={colorScheme === "light" ? DefaultTheme : DarkTheme}
+            >
               <Stack
                 screenOptions={{
                   headerShown: false
                 }}
               />
-            </MySafeAreaView>
-          </ThemeProvider>
-        </Theme>
-      </Suspense>
-    </TamaguiProvider>
+            </ThemeProvider>
+          </Theme>
+        </Suspense>
+      </TamaguiProvider>
+    </Provider>
   );
 }

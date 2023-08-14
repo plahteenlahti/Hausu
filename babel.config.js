@@ -7,7 +7,6 @@ module.exports = function (api) {
     plugins: [
       [
         "transform-inline-environment-variables",
-        // NOTE: include is optional, you can leave this part out
         {
           include: ["TAMAGUI_TARGET", "EXPO_ROUTER_APP_ROOT"]
         }
@@ -21,6 +20,7 @@ module.exports = function (api) {
         }
       ],
       "react-native-reanimated/plugin",
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
       require.resolve("expo-router/babel")
     ]
   };
