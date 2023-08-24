@@ -20,14 +20,3 @@ export default function useObservable(
 
   return state;
 }
-
-// export default function useObservable(observable: any, initial?: any) {
-// 	const [value, setValue] = useState(initial);
-
-// 	useEffect(() => {
-// 		const subscription = observable.subscribe(setValue);
-// 		return () => subscription.unsubscribe();
-// 	}, [observable]);
-
-// 	return value;
-// }

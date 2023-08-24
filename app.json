@@ -1,5 +1,13 @@
 {
   "expo": {
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "13171d92-1d7b-45fc-947f-b072484496a6"
+      }
+    },
     "scheme": "tamagui-app",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -16,6 +24,9 @@
     ],
     "ios": {
       "bundleIdentifier": "digital.fenrir.amira"
+    },
+    "android": {
+      "package": "digital.fenrir.amira"
     }
   },
   "plugins": [
@@ -23,9 +34,11 @@
       "expo-build-properties",
       {
         "android": {
-          "kotlinVersion": "1.6.10",
+          "kotlinVersion": "1.6.20",
           "compileSdkVersion": 33,
           "targetSdkVersion": 33,
+          "minSdkVersion": "23",
+          "buildToolsVersion": "33.0.0",  
           "packagingOptions": {
             "pickFirst": ["**/libc++_shared.so"]
           }

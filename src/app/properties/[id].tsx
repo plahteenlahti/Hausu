@@ -1,10 +1,11 @@
-import {
-  ArrowDown01,
-  ArrowLeft,
-  ArrowUp10,
-  Box,
-  Map
-} from "@tamagui/lucide-icons";
+import Animated, {
+  SharedTransition,
+  withSpring
+} from "react-native-reanimated";
+import { Database } from "@nozbe/watermelondb";
+import { withDatabase } from "@nozbe/watermelondb/DatabaseProvider";
+import withObservables from "@nozbe/with-observables";
+import { ArrowDown01, ArrowLeft, Box, Map } from "@tamagui/lucide-icons";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import {
   Button,
@@ -23,12 +24,23 @@ import {
 
 import { MySafeAreaView } from "../../components/MySafeAreaView";
 import { MyStack } from "../../components/MyStack";
-import { apartments } from "../../models/apartment";
+import { Property } from "../../db/models/property";
+import { formatPrice } from "../../helpers/currency";
 
-export default function User() {
+type Props = {
+  property: Property;
+};
+
+export const transition = SharedTransition.custom((values) => {
+  "worklet";
+  return {
+    height: withSpring(values.targetHeight),
+    width: withSpring(values.targetWidth)
+  };
+});
+
+const PropertyView = ({ property }: Props) => {
   const router = useRouter();
-  const params = useGlobalSearchParams();
-  const property = apartments.find((prop) => prop.id === params.id);
 
   return (
     <MySafeAreaView>
@@ -50,7 +62,7 @@ export default function User() {
                   size="$1"
                   color="$gray10"
                 >
-                  {property.address}
+                  {property.streetAddress}, {property.city} {property.country}
                 </Label>
               </YStack>
             </XStack>
@@ -62,60 +74,60 @@ export default function User() {
               elevate
             />
           </XStack>
-          <Image
-            source={{ height: 250, uri: property.imageUrl }}
-            mb="$2"
-            br="$4"
-          />
+          <Animated.View
+            sharedTransitionTag="propertyCardCover"
+            style={{ height: 250, width: "auto" }}
+            sharedTransitionStyle={transition}
+          >
+            <Image
+              source={{ height: 250, uri: property.imageUrl }}
+              mb="$2"
+              br="$4"
+            />
+          </Animated.View>
 
-          <H6 color="$gray11">Investment return</H6>
+          <H6 color="$gray11">Return on investment</H6>
           <YGroup
             bordered
             separator={<Separator />}
           >
             <YGroup.Item>
               <ListItem
-                title={`${property.squareFootage} sqm`}
-                subTitle="Return on Invested Capital"
+                title={`${formatPrice(property.purchaseCost)}`}
+                subTitle="Purchase cost"
                 icon={Box}
               />
             </YGroup.Item>
             <YGroup.Item>
               <ListItem
-                title={`${property.monthlyExpenses} €`}
-                subTitle="Monthly expenses"
+                title={`${formatPrice(
+                  property.price ?? property.purchaseCost
+                )} €`}
+                subTitle="Estimated price"
                 icon={ArrowDown01}
-                color="$red10"
+                color="$green10"
               />
             </YGroup.Item>
           </YGroup>
 
           <H6 color="$gray11">Details</H6>
+
           <YGroup
             bordered
             separator={<Separator />}
           >
             <YGroup.Item>
               <ListItem
-                title={`${property.squareFootage} sqm`}
-                subTitle="Square footage"
+                title={`${property.purchaseDate}`}
+                subTitle="Purchase date"
                 icon={Box}
               />
             </YGroup.Item>
             <YGroup.Item>
               <ListItem
-                title={`${property.monthlyExpenses} €`}
-                subTitle="Monthly expenses"
-                icon={ArrowDown01}
-                color="$red10"
-              />
-            </YGroup.Item>
-            <YGroup.Item>
-              <ListItem
-                title={`${property.monthlyRentalIncome} €`}
-                subTitle="Monthly rental income"
-                icon={ArrowUp10}
-                color="$green10"
+                title={`${property.squareMeters} sqm`}
+                subTitle="Square footage"
+                icon={Box}
               />
             </YGroup.Item>
           </YGroup>
@@ -131,4 +143,21 @@ export default function User() {
       </ScrollView>
     </MySafeAreaView>
   );
-}
+};
+
+const EnchancedView = withDatabase(
+  withObservables(
+    ["id"],
+    ({ id, database }: { id: string; database: Database }) => ({
+      property: database.get("properties").findAndObserve(id)
+    })
+  )(PropertyView)
+);
+
+const PropertyViewWrapper = () => {
+  const params = useGlobalSearchParams();
+
+  return <EnchancedView id={params.id}></EnchancedView>;
+};
+
+export default PropertyViewWrapper;

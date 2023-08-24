@@ -1,8 +1,9 @@
 export default ({ config }) => {
-  config.version = "48.0.15";
+  config.version = "1.0.0";
   config.plugins = [
     // @nozbe/watermelonDB simdjson plugin
-    "./plugins/watermelon"
+    "./plugins/watermelon",
+    "expo-router"
   ];
   return config;
 };

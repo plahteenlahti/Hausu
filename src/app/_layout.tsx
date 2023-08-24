@@ -1,5 +1,6 @@
-import { createContext, Suspense, useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useColorScheme } from "react-native";
+import DatabaseProvider from "@nozbe/watermelondb/DatabaseProvider";
 import {
   DarkTheme,
   DefaultTheme,
@@ -7,22 +8,20 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-import { TamaguiProvider, Text, Theme } from "tamagui";
+import { TamaguiProvider, Text, Theme, View } from "tamagui";
 
+import config from "../../tamagui.config";
 import { database } from "../db/database";
-import config from "../tamagui.config";
 
 SplashScreen.preventAutoHideAsync();
-
-export const DatabaseContext = createContext(database);
-export const { Provider, Consumer } = DatabaseContext;
 
 export default function Layout() {
   const colorScheme = useColorScheme();
 
   const [loaded] = useFonts({
     Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
-    InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf")
+    InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
+    SpaceGroteskBold: require("@/assets/SpaceGrotesk-Bold.ttf")
   });
 
   useEffect(() => {
@@ -34,7 +33,7 @@ export default function Layout() {
   if (!loaded) return null;
 
   return (
-    <Provider value={database}>
+    <DatabaseProvider database={database}>
       <TamaguiProvider config={config}>
         <Suspense fallback={<Text>Loading...</Text>}>
           <Theme name={colorScheme}>
@@ -45,11 +44,24 @@ export default function Layout() {
                 screenOptions={{
                   headerShown: false
                 }}
-              />
+              >
+                <Stack.Screen
+                  name="(app)"
+                  options={{
+                    title: "Home"
+                  }}
+                />
+                <Stack.Screen
+                  name="properties/[id]"
+                  options={{
+                    title: "Property"
+                  }}
+                />
+              </Stack>
             </ThemeProvider>
           </Theme>
         </Suspense>
       </TamaguiProvider>
-    </Provider>
+    </DatabaseProvider>
   );
 }

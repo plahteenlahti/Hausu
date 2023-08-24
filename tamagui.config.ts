@@ -3,7 +3,7 @@ import { createInterFont } from "@tamagui/font-inter";
 import { createMedia } from "@tamagui/react-native-media-driver";
 import { shorthands } from "@tamagui/shorthands";
 import { themes, tokens } from "@tamagui/themes";
-import { createTamagui } from "tamagui";
+import { createFont, createTamagui } from "tamagui";
 
 const animations = createAnimations({
   bouncy: {
@@ -27,16 +27,25 @@ const animations = createAnimations({
 
 const headingFont = createInterFont();
 const bodyFont = createInterFont();
+const numberFont = createFont({
+  family: "SpaceGrotesk-Bold",
+  size: {
+    1: 12,
+    2: 14,
+    12: 60
+  }
+});
 
 const config = createTamagui({
   animations,
-  defaultTheme: "dark",
+  defaultTheme: "light",
   shouldAddPrefersColorThemes: false,
   themeClassNameOnRoot: false,
   shorthands,
   fonts: {
     heading: headingFont,
-    body: bodyFont
+    body: bodyFont,
+    number: numberFont
   },
   themes,
   tokens,
