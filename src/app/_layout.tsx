@@ -52,7 +52,7 @@ export default function Layout() {
                   }}
                 />
                 <Stack.Screen
-                  name="properties/[id]"
+                  name="apartments/[id]"
                   options={{
                     title: "Property"
                   }}

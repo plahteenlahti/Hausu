@@ -12,18 +12,19 @@
     "userInterfaceStyle": "automatic",
     "splash": {
       "backgroundColor": "#fff",
-      "image": "./assets/splash.png",
+      "image": "./src/assets/splash.png",
       "resizeMode": "contain"
     },
-    "icon": "./assets/icon.png",
-    "name": "amira",
+    "icon": "./src/assets/icon.png",
+    "name": "Hausu",
     "slug": "amira",
     "plugins": [
       "expo-router",
       "expo-build-properties"
     ],
     "ios": {
-      "bundleIdentifier": "digital.fenrir.amira"
+      "bundleIdentifier": "digital.fenrir.amira",
+      "buildNumber": "5"
     },
     "android": {
       "package": "digital.fenrir.amira"

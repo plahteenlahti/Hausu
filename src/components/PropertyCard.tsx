@@ -7,7 +7,7 @@ import { Card, H6, Image, Label, Stack, Text, XStack, ZStack } from "tamagui";
 import { Property as PropertyType } from "../db/models/property";
 import { formatPrice } from "../helpers/currency";
 
-import { transition } from "@/app/properties/[id]";
+import { transition } from "@/app/apartments/[id]";
 
 type Props = {
   property: PropertyType;
@@ -19,7 +19,7 @@ export const PropertyCard = ({ property }: Props) => {
   const router = useRouter();
 
   const navigateToProperty = () => {
-    router.push(`/properties/${property.id}`);
+    router.push(`/apartments/${property.id}`);
   };
 
   const animateTransition = () => {

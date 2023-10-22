@@ -1,11 +1,14 @@
 import { useState } from "react";
+import { View } from "react-native";
 import Animated, {
   Extrapolation,
   FadeIn,
   FadeOut,
   interpolate,
+  useAnimatedRef,
   useAnimatedScrollHandler,
   useAnimatedStyle,
+  useScrollViewOffset,
   useSharedValue
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,10 +29,10 @@ type Props = {
 };
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 const Properties = ({ properties }: Props) => {
-  const scrollY = useSharedValue(0);
+  const aref = useAnimatedRef<Animated.ScrollView>();
+  const scrollHandler = useScrollViewOffset(aref);
 
   const [open, setOpen] = useState(false);
   const database = useDatabase();
@@ -38,20 +41,19 @@ const Properties = ({ properties }: Props) => {
     setOpen((x) => !x);
   };
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (e) => {
-      console.log(e.contentOffset.y);
-      scrollY.value = e.contentOffset.y;
-    }
-  });
-
-  const animatedStyles = useAnimatedStyle(() => {
-    const opacity = interpolate(scrollY.value, [0, 150], [0, 1], {});
-
+  const headerStyle = useAnimatedStyle(() => {
     return {
-      opacity: opacity
+      opacity: interpolate(scrollHandler.value, [0, 30], [0, 1])
     };
   });
+
+  // const titleStyle = useAnimatedStyle(() => {
+  //   return {
+  //     transform: [
+  //       { scale: interpolate(scrollHandler.value, [-30, 0, 30], [2, 1, 1]) }
+  //     ]
+  //   };
+  // });
 
   const populateDB = async () => {
     try {
@@ -186,10 +188,8 @@ const Properties = ({ properties }: Props) => {
   return (
     <Stack>
       <Animated.ScrollView
-        onScroll={scrollHandler}
         entering={FadeIn}
         exiting={FadeOut}
-        paddingTop={120}
       >
         {properties.map((property) => (
           <PropertyCard
@@ -217,10 +217,18 @@ const Properties = ({ properties }: Props) => {
         />
       </Animated.ScrollView>
 
-      <AnimatedBlurView
-        style={[{ position: "absolute", width: "100%" }, animatedStyles]}
-        intensity={100}
-      >
+      <View style={{ position: "absolute", width: "100%", height: 100 }}>
+        <Animated.View
+          style={[
+            { position: "absolute", width: "100%", height: 100 },
+            headerStyle
+          ]}
+        >
+          <BlurView
+            style={[{ width: "100%", height: 100 }]}
+            intensity={100}
+          />
+        </Animated.View>
         <XStack
           paddingTop={top}
           justifyContent="space-between"
@@ -237,7 +245,7 @@ const Properties = ({ properties }: Props) => {
             Properties
           </AnimatedText>
         </XStack>
-      </AnimatedBlurView>
+      </View>
     </Stack>
   );
 };
